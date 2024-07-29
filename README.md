@@ -35,7 +35,7 @@ This project is a web application built with a React frontend and a Java Spring 
 1. Clone the repository:
    
 2. bash
-   git clone https://github.com/yourusername/Shopping.git
+   git clone https://github.com/yazandahood8/Shopping.git
 3. Navigate to the frontend directory:
 
 4. bash
