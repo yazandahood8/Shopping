@@ -4,6 +4,10 @@
 
 This project is a web application built with a React frontend and a Java Spring Boot backend. The application includes features such as login, sign up, home, and product listing with filters for price, new/old status, and search by name.
 
+## Technologies Used
+
+- **Frontend**: JavaScript, React
+- **Backend**: Java, Spring Boot
 ## Features
 
 ### Frontend (React)
