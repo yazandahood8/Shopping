@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Form } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Form, Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import './Products.css'; // Custom CSS for styling
@@ -12,11 +12,13 @@ const Products = () => {
     const [type, setType] = useState('');
     const [isNew, setIsNew] = useState(false);
     const [isFeatured, setIsFeatured] = useState(false);
+    const userId = localStorage.getItem('userId'); // Get userId from localStorage
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get('http://localhost:8081/products');
+                console.log('Products data:', response.data); // Debug log
                 setProducts(response.data);
                 setFilteredProducts(response.data);
             } catch (error) {
@@ -37,27 +39,40 @@ const Products = () => {
         }
 
         if (priceRange) {
-            const [minPrice, maxPrice] = priceRange.split('-').map(Number);
-            results = results.filter(product => {
-                const price = parseFloat(product.price.replace('$', ''));
-                return price >= minPrice && price <= maxPrice;
-            });
+            const [min, max] = priceRange.split('-').map(Number);
+            results = results.filter(product => product.price >= min && product.price <= max);
         }
 
         if (type) {
-            results = results.filter(product => product.type === type);
+            results = results.filter(product => product.type === type.toUpperCase());
         }
 
         if (isNew) {
-            results = results.filter(product => product.isNew);
+            results = results.filter(product => product.type === 'NEW');
         }
 
         if (isFeatured) {
-            results = results.filter(product => product.isFeatured);
+            results = results.filter(product => product.featured);
         }
 
         setFilteredProducts(results);
     }, [searchTerm, priceRange, type, isNew, isFeatured, products]);
+
+    const handleAddToCart = async (productId) => {
+        try {
+            // Assuming cart endpoint and method for adding items to the cart
+            const cartItem = {
+                user: { id: userId },
+                product: { id: productId },
+                quantity: 1 // Default quantity; adjust as needed
+            };
+            await axios.post('http://localhost:8081/cart_item', cartItem);
+            alert('Product added to cart!');
+        } catch (error) {
+            console.error('Error adding product to cart:', error);
+            alert('Failed to add product to cart.');
+        }
+    };
 
     return (
         <Container className="mt-5">
@@ -86,7 +101,7 @@ const Products = () => {
                     <Form.Label>Product Type</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Enter product type (e.g., electronics)"
+                        placeholder="Enter product type (e.g., NEW, OLD)"
                         value={type}
                         onChange={(e) => setType(e.target.value)}
                     />
@@ -115,12 +130,21 @@ const Products = () => {
                     filteredProducts.map(product => (
                         <Col key={product.id} sm={12} md={6} lg={4} className="mb-4">
                             <Card className="product-card">
-                                <Card.Img variant="top" src={product.image || '/default-image.jpg'} />
+                                <Card.Img variant="top" src={product.image || '/default-image.jpg'} alt={product.name} />
                                 <Card.Body>
+                                    {product.type === 'NEW' && <Badge bg="success" className="mb-2">New</Badge>}
+                                    {product.featured && <Badge bg="warning" className="mb-2">Featured</Badge>}
                                     <Card.Title>{product.name}</Card.Title>
                                     <Card.Text>{product.description}</Card.Text>
-                                    <Card.Text><strong>{product.price}</strong></Card.Text>
+                                    <Card.Text><strong>${parseFloat(product.price).toFixed(2)}</strong></Card.Text>
                                     <Button variant="primary" as={Link} to={`/products/${product.id}`}>View Details</Button>
+                                    <Button
+                                        variant="success"
+                                        onClick={() => handleAddToCart(product.id)}
+                                        className="mt-2"
+                                    >
+                                        Add to Cart
+                                    </Button>
                                 </Card.Body>
                             </Card>
                         </Col>

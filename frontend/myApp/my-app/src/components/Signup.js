@@ -19,7 +19,7 @@ const SignUp = () => {
                 password
             });
             console.log(response.data);
-            navigate('/'); // Redirect to the login page on successful sign-up
+            navigate('/login'); // Redirect to the login page on successful sign-up
         } catch (error) {
             console.error('Sign-up failed:', error);
         }

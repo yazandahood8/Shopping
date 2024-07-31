@@ -15,9 +15,17 @@ const Login = () => {
                 username,
                 password
             });
-            console.log(response.data);
+            console.log('Response:', response.data); // Log the response for debugging
+            
             if (response.status === 200) {
-                navigate('/home'); // Redirect to home page
+                // Check if ID is present in the response
+                if (response.data && response.data.id) {
+                    const { id } = response.data;
+                    localStorage.setItem('userId', id);
+                    navigate('/');
+                } else {
+                    console.error('ID not found in response:', response.data);
+                }
             }
         } catch (error) {
             console.error('Login failed:', error);

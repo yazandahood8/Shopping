@@ -1,0 +1,25 @@
+/* src/components/Navbar.css */
+.navbar {
+    background-color: #f8f9fa;
+    padding: 10px;
+}
+
+.navbar-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+
+.navbar-item {
+    margin: 0 15px;
+}
+
+.navbar-item a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.navbar-item a:hover {
+    text-decoration: underline;
+}
